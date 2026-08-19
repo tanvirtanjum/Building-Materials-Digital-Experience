@@ -7,7 +7,7 @@ I quickly realized that a simple, flat products table would not be sufficient or
 
 To solve this, I designed a normalized, relational database schema inspired by enterprise Product Information Management (PIM) systems, balancing scalability with the scope of an MVP.
 
-![image info](./Research/mermaid-diagram-2026-08-19-211604.png)
+![image info](./Research/ERD/mermaid-diagram-2026-08-19-211604.png)
 
 ##### Key Architectural Decisions:
 ##### Base Products vs. Variants (SKUs):
