@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="app">
+<head ng-controller="title.controller">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{GenerateTitle()}}</title>
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="./assets/bootstrap-5.3.8-dist/css/bootstrap.min.css" crossorigin="anonymous">
+    <script src="./assets/bootstrap-5.3.8-dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+
+    <!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"> -->
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="./assets/fontawesome-free-7.2.0-web/css/all.css" crossorigin="anonymous">
+
+    <!-- AngularJS -->
+    <script src="./assets/angularjs/angular.js" crossorigin="anonymous"></script>
+    <!-- Angular Route 1.8.3 -->
+    <script src="./assets/angularjs/angular-route.js"></script>
+    <script src="./assets/angularjs/angular-cookies.js"></script>
+    <script src="./assets/angularjs/ng-file-upload.js"></script>
+    <script src="./assets/angularjs/ng-file-upload-shim.js"></script>
+
+    <!-- App Controller -->
+    <script src="./controllers/app.js" crossorigin="anonymous"></script>
+
+    <!-- Title Controller -->
+    <script src="./controllers/title.controller.js" crossorigin="anonymous"></script>
+
+    <!-- Navigation Controller -->
+    <script src="./controllers/nav.controller.js" crossorigin="anonymous"></script>
+
+    <!-- Home Controller -->
+    <script src="./controllers/home.controller.js" crossorigin="anonymous"></script>
+
+    <!-- Products Controller -->
+    <script src="./controllers/products.controller.js" crossorigin="anonymous"></script>
+
+
+
+</head>
+<body class="d-flex flex-column min-vh-100">
+    <header ng-controller="nav.controller">
+        <nav class="navbar navbar-expand-lg bg-body-tertiary bg-dark " data-bs-theme="dark">
+        <div class="container-fluid">
+            <span class="navbar-brand" href="#">
+                <i class="fa-solid fa-screwdriver-wrench"></i> &nbsp;X Digital
+            </span>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+                <div class="navbar-nav">
+                    <a class="nav-link" ng-class="{ active: isActive('/home') }" href="#!/home">Home</a>
+                    <a class="nav-link" ng-class="{ active: isActive('/products') }" href="#!/products">Products</a>
+                    <!-- <a class="nav-link" href="#">Pricing</a>
+                    <a class="nav-link disabled" aria-disabled="true">Disabled</a> -->
+                </div>
+            </div>
+        </div>
+        </nav>
+    </header>
+
+    <main style="height: 81.5%; overflow-y: hidden;" ng-view>
+        
+    </main>
+
+    <footer class="bg-dark text-light text-center py-3 mt-auto">
+        <p class="mb-0">&copy; 2026 X Digital Experience. All rights reserved.</p>
+    </footer>
+</body>
+</html>
