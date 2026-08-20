@@ -70,7 +70,7 @@ This approach ensures that the application is fully functional out-of-the-box fo
 ##### 2. Architecture & Data Flow
 
 The application follows a decoupled client-server architecture:
-![image info](./Research/ADF/mermaid-diagram-2026-08-20-195507.png)
+<img src="./Research/ADF/mermaid-diagram-2026-08-20-195507.png" height="50%" width="50%" alt="Architecture Diagram">
 
 
 ### Sources, References & AI Usage
