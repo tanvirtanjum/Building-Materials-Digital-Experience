@@ -24,6 +24,8 @@ Technical buyers (architects, planners) rely heavily on compliance and safety sh
 
 By structuring the database this way, the backend API can efficiently serve complex, filtered queries (e.g., "Show me all non-combustible products for interior walls") while maintaining a clean and scalable data model.
 
+---
+
 ### Database Schema Breakdown
 
 This table explains the purpose of each table in the database and how they work together using a real-world building material example.
@@ -36,6 +38,44 @@ This table explains the purpose of each table in the database and how they work 
 | **`product_category_mapping`** | A bridge table that allows one product to belong to multiple categories. | "Diamant GKFI" belongs to both the "Gipsplatten" category AND the "Brandschutz" (Fire Protection) category. |
 | **`technical_attributes`** | A flexible key-value store for technical properties. Prevents creating hundreds of empty database columns. | **Attribute:** "Brandschutzklasse" (Fire Rating)<br>**Value:** "A2-s1, d0" |
 | **`documents`** | Stores links to the mandatory safety and compliance PDFs required by architects. | **Type:** "Technisches Datenblatt"<br>**URL:** `/downloads/diamant_datenblatt.pdf` |
+
+---
+
+### Mock Data Generation & Seeding
+
+To thoroughly test the backend API and frontend filtering logic, I generated a robust seed dataset ([`schema.sql`](./Research/DB/schema.sql)) consisting of 15 diverse base products resulting in over 150 rows of relational data. 
+
+**Data Strategy:**
+* **Diverse Categories:** Included varied materials (Drywall, Insulation, Plasters, Ceilings) to ensure all filter types (e.g., Fire Rating, Acoustic Rating, Moisture Resistance) and edge cases (e.g., `NULL` dimensions for buckets of plaster) are covered.
+* **Asset Handling:** To keep the repository lightweight and avoid any copyright infringement, no physical image or PDF files are stored in the codebase. 
+  * **Images:** Utilized `placehold.co` to dynamically generate contextual placeholder images via URL.
+  * **Documents:** Linked to public W3C dummy PDFs for Technical Data Sheets and Safety Certificates.
+  
+This approach ensures that the application is fully functional out-of-the-box for anyone reviewing the code, without requiring them to download or configure a local static assets folder.
+
+---
+
+### Technical Implementation
+
+##### 1. Technology Stack & Rationale
+
+* **Backend:** Node.js & Express.js
+  * Chosen for lightweight, high-performance RESTful API creation and straightforward routing.
+* **Database:** MySQL (via `mysql2` connection pooling)
+  * Utilized for robust relational data modeling (one-to-many variants, many-to-many categories, EAV attributes).
+* **Frontend:** HTML5, Bootstrap 5, jQuery
+  * A decoupled, client-rendered setup utilizing Bootstrap for responsive grid layouts and jQuery for clean, AJAX-driven state management and dynamic DOM manipulation.
+
+
+##### 2. Architecture & Data Flow
+
+The application follows a decoupled client-server architecture:
+![image info](./Research/CSA/mermaid-diagram-2026-08-20-124533.png)
+
+##### 3. Data Flow Sequence
+
+The following sequence diagram illustrates the exact execution flow from the moment a user interacts with the UI to the DOM updating with the filtered products.
+![image info](./Research/SD/mermaid-diagram-2026-08-20-125244.png)
 
 
 ### Sources, References & AI Usage
@@ -51,5 +91,10 @@ In accordance with the assignment guidelines, **Google Gemini** was utilized as 
 * **Domain Investigation & Brainstorming:** Exploring building materials domain concepts, EAV database design patterns, and filtering criteria.
 * **Documentation & Language Polishing:** Drafting and refining the schema explanations, data dictionary tables, and README documentation for clarity and readability.
 * **Code & Schema Review:** Assisting in validating SQL relational structures and naming conventions.
+
+##### 3. Additional Tools & Libraries
+* **Mermaid.js**
+  * **URL:** [https://mermaid.js.org/](https://mermaid.js.org/)
+  * **Purpose:** Used to programmatically generate the database schema, architecture, and sequence diagrams directly within the Markdown documentation to clearly illustrate system design and data flow.
 
 *Note: All architectural decisions, database schemas, API logic, and code implementations were reviewed, understood, and tested by the candidate.*
