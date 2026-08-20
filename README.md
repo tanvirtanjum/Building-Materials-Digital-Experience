@@ -1,7 +1,7 @@
 # Building Materials Digital Experience
 
 ### Database Architecture & Schema Design
-To ensure this application accurately reflects the real-world complexities of the building materials industry, I began the project with a domain research phase, analyzing how products are structured on Knauf's official website.
+To ensure this application accurately reflects the real-world complexities of the building materials industry, I began the project with a domain research phase, analyzing how products are structured on [`Knauf`](https://knauf.com/de-DE)'s official website.
 
 I quickly realized that a simple, flat products table would not be sufficient or scalable. Building materials are highly variable: insulation rolls are measured by thermal conductivity (WLS) and thickness, drywall boards by fire ratings and dimensions, and plaster by bucket weight and grain size.
 
