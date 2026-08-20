@@ -24,12 +24,32 @@ Technical buyers (architects, planners) rely heavily on compliance and safety sh
 
 By structuring the database this way, the backend API can efficiently serve complex, filtered queries (e.g., "Show me all non-combustible products for interior walls") while maintaining a clean and scalable data model.
 
+### Database Schema Breakdown
 
-### Sources & References
+This table explains the purpose of each table in the database and how they work together using a real-world building material example.
 
+| Table Name | Purpose | Easy Example |
+| :--- | :--- | :--- |
+| **`products`** | Stores the overarching "marketing" concept of the product. | **Name:** "Diamant GKFI"<br>**Description:** "Premium robust drywall board." |
+| **`product_variants`** | Stores the actual, physical items (SKUs) that a contractor adds to their cart. | **Variant 1:** 2000mm x 1250mm, 32kg<br>**Variant 2:** 2500mm x 1250mm, 40kg |
+| **`categories`** | Organizes the catalog into groups and sub-groups (hierarchical). | "Platten" (Parent Category) -> "Gipsplatten" (Sub-category) |
+| **`product_category_mapping`** | A bridge table that allows one product to belong to multiple categories. | "Diamant GKFI" belongs to both the "Gipsplatten" category AND the "Brandschutz" (Fire Protection) category. |
+| **`technical_attributes`** | A flexible key-value store for technical properties. Prevents creating hundreds of empty database columns. | **Attribute:** "Brandschutzklasse" (Fire Rating)<br>**Value:** "A2-s1, d0" |
+| **`documents`** | Stores links to the mandatory safety and compliance PDFs required by architects. | **Type:** "Technisches Datenblatt"<br>**URL:** `/downloads/diamant_datenblatt.pdf` |
+
+
+### Sources, References & AI Usage
+##### 1. External Sources
 To ensure the database schema, filters, and mock data accurately reflected real-world industry standards, the following official source was used during the investigation and data modeling phase:
+* **Knauf Germany Official Product Catalog**
+  *   **Accessed on:** August 19, 2026
+  * **URL:** [https://knauf.com/de-DE/p/produkte](https://knauf.com/de-DE/p/produkte)
+  * **Purpose:** Analyzed product categorization, technical specifications, and real-world data structures to design a normalized relational database schema.
 
-*   **Knauf Germany Official Product Catalog**
-    *   **URL:** [https://knauf.com/de-DE/p/produkte](https://knauf.com/de-DE/p/produkte)
-    *   **Accessed on:** August 19, 2026
-    *   **Purpose:** Used to investigate product categorization (e.g., Platten, Dämmung), technical filter criteria (e.g., Brandschutzklasse, Anwendungsbereich), and realistic product hierarchies (Base Products vs. SKU Variants) to design the relational database schema.
+##### 2. Use of AI Tools
+In accordance with the assignment guidelines, **Google Gemini** was utilized as an assistive tool during the development of this project for:
+* **Domain Investigation & Brainstorming:** Exploring building materials domain concepts, EAV database design patterns, and filtering criteria.
+* **Documentation & Language Polishing:** Drafting and refining the schema explanations, data dictionary tables, and README documentation for clarity and readability.
+* **Code & Schema Review:** Assisting in validating SQL relational structures and naming conventions.
+
+*Note: All architectural decisions, database schemas, API logic, and code implementations were reviewed, understood, and tested by the candidate.*
