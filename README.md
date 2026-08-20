@@ -59,12 +59,12 @@ This approach ensures that the application is fully functional out-of-the-box fo
 
 ##### 1. Technology Stack & Rationale
 
-* **Backend:** Node.js & Express.js
+* **Backend:** `Node.js` & `Express.js`
   * Chosen for lightweight, high-performance RESTful API creation and straightforward routing.
-* **Database:** MySQL (via `mysql2` connection pooling)
+* **Database:** `MySQL` (via `mysql2` connection pooling)
   * Utilized for robust relational data modeling (one-to-many variants, many-to-many categories, EAV attributes).
-* **Frontend:** HTML5, Bootstrap 5, jQuery
-  * A decoupled, client-rendered setup utilizing Bootstrap for responsive grid layouts and jQuery for clean, AJAX-driven state management and dynamic DOM manipulation.
+* **Frontend:** `HTML5`, `Bootstrap 5`, `AngularJS`, `FontAwesome`
+  * A decoupled Single Page Application (SPA) utilizing Bootstrap 5 and FontAwesome for a responsive UI, alongside AngularJS for robust MVVM architecture, two-way data binding, and seamless API integration.
 
 
 ##### 2. Architecture & Data Flow
