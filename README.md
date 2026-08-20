@@ -70,12 +70,7 @@ This approach ensures that the application is fully functional out-of-the-box fo
 ##### 2. Architecture & Data Flow
 
 The application follows a decoupled client-server architecture:
-![image info](./Research/CSA/mermaid-diagram-2026-08-20-124533.png)
-
-##### 3. Data Flow Sequence
-
-The following sequence diagram illustrates the exact execution flow from the moment a user interacts with the UI to the DOM updating with the filtered products.
-![image info](./Research/SD/mermaid-diagram-2026-08-20-125244.png)
+![image info](./Research/ADF/mermaid-diagram-2026-08-20-195507.png)
 
 
 ### Sources, References & AI Usage
