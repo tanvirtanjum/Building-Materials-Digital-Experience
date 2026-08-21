@@ -1,147 +1,233 @@
 <!-- Loading Spinner -->
-<div class="text-center" ng-if="loading">
-    <div class="spinner-border text-primary" role="status">
-        <span class="visually-hidden">Loading...</span>
-    </div>
-</div>
-
-<!-- Error Message -->
-<div class="alert alert-danger" ng-if="error">
-    {{ error }}
-</div>
-
-<!-- Product List -->
-<div class="row" ng-if="!loading && !error">
-    <div class="col-md-4 mb-4" ng-repeat="product in products">
-        <div class="card h-100 product-card">
-            
-            <!-- Using your schema's image_url field -->
-            <img ng-src="{{ product.image_url || 'https://via.placeholder.com/300x200?text=No+Image' }}" 
-                 class="card-img-top" 
-                 alt="{{ product.name }}"
-                 style="height: 200px; object-fit: cover;">
-
-            <div class="card-body">
-                <h5 class="card-title">{{ product.name }}</h5>
-                
-                <!-- Display the grouped categories -->
-                <p class="card-text text-muted small mb-2">
-                    <i class="bi bi-tags"></i> {{ product.categories || 'Uncategorized' }}
-                </p>
-                
-                <!-- Display the short description -->
-                <p class="card-text" style="font-size: 0.9rem;">
-                    {{ product.short_description }}
-                </p>
-                
-                <!-- Display the brand division as a badge -->
-                <span class="badge bg-secondary mb-3">{{ product.brand_division }}</span>
-            </div>
-            
-            <div class="card-footer bg-white border-top-0">
-                <button class="btn btn-outline-primary w-100" data-bs-toggle="modal" data-bs-target="#productModal" ng-click="openDetails(product)"><i class="fa-regular fa-eye"></i>&nbsp;View Details</button>
-            </div>
+        <div class="text-center mt-5" ng-if="loading">
+            <div class="spinner-border text-primary" role="status"></div>
+            <p class="mt-2 text-muted">Loading catalog...</p>
         </div>
-    </div>
-</div>
 
-<!-- Product Details Modal -->
-<div class="modal fade" id="productModal" tabindex="-1" aria-labelledby="productModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-xl">
-        <div class="modal-content">
-            <div class="modal-header bg-primary text-white">
-                <h5 class="modal-title" id="productModalLabel">{{ selectedProduct.name }}</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
+        <!-- Error Message -->
+        <div class="alert alert-danger mt-3 mx-3" ng-if="error">
+            <i class="bi bi-exclamation-triangle"></i> {{ error }}
+        </div>
+
+        <div class="container-fluid mt-4" ng-if="!loading && !error">
             
-            <div class="modal-body">
-                <!-- Loading State -->
-                <div class="text-center my-5" ng-if="detailsLoading">
-                    <div class="spinner-border text-primary" role="status"></div>
-                    <p class="mt-2">Loading specifications...</p>
+            <!-- Advanced Search and Filter Bar -->
+            <div class="row g-2 bg-white p-3 rounded shadow-sm border align-items-center mb-3">
+                
+                <!-- Text Search -->
+                <div class="col-md-3">
+                    <div class="input-group">
+                        <span class="input-group-text bg-white text-muted"><i class="bi bi-search"></i></span>
+                        <input type="text" class="form-control border-start-0" placeholder="Search catalog..." ng-model="searchFilter.$" ng-change="currentPage = 1">
+                    </div>
                 </div>
-
-                <!-- Product Details Content -->
-                <div class="row" ng-if="!detailsLoading">
-                    <!-- Left Column: Image & Basic Info -->
-                    <div class="col-md-5">
-                        <img ng-src="{{ selectedProduct.image_url || 'https://via.placeholder.com/600x400?text=No+Image' }}" class="img-fluid rounded mb-3" alt="{{ selectedProduct.name }}">
-                        <p class="badge bg-secondary">{{ selectedProduct.brand_division }}</p>
-                        <p><strong>Categories:</strong> 
-                        <ul class="list-unstyled mb-3">
-                            <li ng-repeat="cat in selectedProduct.hierarchicalCategories">
-                                <!-- If it has a parent, show: Main Category » Sub Category -->
-                                <span ng-if="cat.main_category" class="text-muted">{{ cat.main_category }} &raquo; </span>
-                                <span class="fw-bold">{{ cat.sub_category }}</span>
+                
+                <!-- Multi-Select Category Dropdown -->
+                <div class="col-md-3">
+                    <div class="dropdown d-grid">
+                        <button class="btn btn-white border dropdown-toggle text-start bg-white" 
+                                ng-class="{'text-muted': getSelectedCategoryCount() === 0, 'text-primary fw-bold border-primary': getSelectedCategoryCount() > 0}" 
+                                type="button" data-bs-toggle="dropdown" data-bs-auto-close="outside">
+                            
+                            <!-- Show this when nothing is selected -->
+                            <span ng-if="getSelectedCategoryCount() === 0">Select Categories...</span>
+                            
+                            <!-- Show this when 1 or more are selected -->
+                            <span ng-if="getSelectedCategoryCount() > 0">
+                                Categories ({{ getSelectedCategoryCount() }})
+                            </span>
+                        </button>
+                        <ul class="dropdown-menu w-100 p-2 shadow-sm" style="max-height: 250px; overflow-y: auto;">
+                            <li ng-repeat="cat in uniqueCategories">
+                                <div class="form-check my-1">
+                                    <input class="form-check-input" type="checkbox" id="cat-{{$index}}" ng-model="selectedCategories[cat]" ng-change="currentPage = 1">
+                                    <label class="form-check-label w-100" for="cat-{{$index}}" style="cursor: pointer;">{{ cat }}</label>
+                                </div>
                             </li>
-                            <li ng-if="!selectedProduct.hierarchicalCategories.length" class="text-muted small">Uncategorized</li>
-                        </ul>
-                        </p>
-                        <p>{{ selectedProduct.short_description }}</p>
-                        
-                        <!-- Documents -->
-                        <h6 class="mt-4 border-bottom pb-2">Documents</h6>
-                        <ul class="list-unstyled">
-                            <li ng-repeat="doc in selectedProduct.documents" class="mb-2">
-                                <a href="{{ doc.file_url }}" target="_blank" class="text-decoration-none">
-                                    <i class="bi bi-file-earmark-pdf text-danger"></i> {{ doc.document_type }}
-                                </a>
-                            </li>
-                            <li ng-if="!selectedProduct.documents.length" class="text-muted small">No documents available.</li>
                         </ul>
                     </div>
+                </div>
+                
+                <!-- Brand Dropdown -->
+                <div class="col-md-2">
+                    <select class="form-select" ng-model="searchFilter.brand_division" ng-change="currentPage = 1">
+                        <option value="">All Brands</option>
+                        <option ng-repeat="brand in uniqueBrands" value="{{ brand }}">{{ brand }}</option>
+                    </select>
+                </div>
 
+                <!-- Sorting Dropdown -->
+                <div class="col-md-2">
+                    <select class="form-select" ng-model="sortOption" ng-change="currentPage = 1">
+                        <option value="name">Name (A-Z)</option>
+                        <option value="-name">Name (Z-A)</option>
+                        <option value="-created_at">Newest First</option>
+                        <option value="created_at">Oldest First</option>
+                    </select>
+                </div>
 
-                    <!-- Right Column: Variants & Attributes -->
-                    <div class="col-md-7">
-                        <!-- Technical Attributes -->
-                        <h6 class="border-bottom pb-2">Technical Specifications</h6>
-                        <table class="table table-sm table-striped mb-4">
-                            <tbody>
-                                <tr ng-repeat="attr in selectedProduct.attributes">
-                                    <th style="width: 40%;">{{ attr.attribute_name }}</th>
-                                    <td>{{ attr.attribute_value }}</td>
-                                </tr>
-                                <tr ng-if="!selectedProduct.attributes.length">
-                                    <td colspan="2" class="text-muted text-center">No specifications listed.</td>
-                                </tr>
-                            </tbody>
-                        </table>
+                <!-- Clear Filters -->
+                <div class="col-md-2 text-end">
+                    <button class="btn btn-outline-danger w-100" ng-click="clearFilters()"><i class="bi bi-x-circle"></i> Clear</button>
+                </div>
+            </div>
+            
+            <!-- Live Results Counter -->
+            <div class="row mb-3">
+                <div class="col-12 text-muted small fw-bold">
+                    Showing {{ filteredProducts.length }} of {{ products.length }} products
+                </div>
+            </div>
 
-                        <!-- Variants/SKUs -->
-                        <h6 class="border-bottom pb-2">Available Variants</h6>
-                        <div class="table-responsive">
-                            <table class="table table-sm table-hover table-bordered text-center">
-                                <thead class="table-light">
-                                    <tr>
-                                        <th>SKU</th>
-                                        <th>L (mm)</th>
-                                        <th>W (mm)</th>
-                                        <th>Thick (mm)</th>
-                                        <th>Weight (kg)</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr ng-repeat="variant in selectedProduct.variants">
-                                        <td class="text-start fw-bold">{{ variant.sku }}</td>
-                                        <td>{{ variant.length_mm || '-' }}</td>
-                                        <td>{{ variant.width_mm || '-' }}</td>
-                                        <td>{{ variant.thickness_mm || '-' }}</td>
-                                        <td>{{ variant.weight_kg || '-' }}</td>
-                                    </tr>
-                                    <tr ng-if="!selectedProduct.variants.length">
-                                        <td colspan="5" class="text-muted">No variants available.</td>
-                                    </tr>
-                                </tbody>
-                            </table>
+            <!-- Product List -->
+            <div class="row">
+                <div class="col-md-4 mb-4" ng-repeat="product in (filteredProducts = (products | filter: searchFilter | filter: categoryFilter | orderBy: sortOption)) | limitTo: pageSize : (currentPage - 1) * pageSize">
+                    <div class="card h-100 shadow-sm product-card">
+                        
+                        <img ng-src="{{ product.image_url || 'https://placehold.co/600x400/eeeeee/31343c?text=No%20Image' }}" class="card-img-top border-bottom" alt="{{ product.name }}" style="height: 200px; object-fit: cover;">
+
+                        <div class="card-body">
+                            <h5 class="card-title">{{ product.name }}</h5>
+                            <p class="card-text text-muted small mb-2"><i class="bi bi-tags"></i> {{ product.categories || 'Uncategorized' }}</p>
+                            <p class="card-text text-truncate" style="font-size: 0.9rem;" title="{{ product.short_description }}">{{ product.short_description }}</p>
+                            <span class="badge bg-secondary mb-3">{{ product.brand_division }}</span>
+                        </div>
+                        
+                        <div class="card-footer bg-white border-top-0 pb-3">
+                            <!-- View Details Button -->
+                            <button type="button" class="btn btn-outline-primary w-100" data-bs-toggle="modal" data-bs-target="#productModal" ng-click="openDetails(product)">
+                                <i class="fa-regular fa-eye"></i> View Details
+                            </button>
                         </div>
                     </div>
                 </div>
+                
+                <!-- No Results fallback -->
+                <div class="col-12 text-center py-5" ng-if="filteredProducts.length === 0">
+                    <h5 class="text-muted">No products found matching your filters.</h5>
+                    <button class="btn btn-primary mt-2" ng-click="clearFilters()">Clear Filters</button>
+                </div>
             </div>
-            
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+
+            <!-- Pagination Controls -->
+            <div class="row mt-2 mb-5" ng-if="filteredProducts.length > pageSize">
+                <div class="col-12 d-flex justify-content-center">
+                    <nav aria-label="Product catalog pagination">
+                        <ul class="pagination shadow-sm">
+                            <li class="page-item" ng-class="{ 'disabled': currentPage === 1 }">
+                                <button class="page-link" ng-click="changePage(-1)" ng-disabled="currentPage === 1">&laquo; Prev</button>
+                            </li>
+                            <li class="page-item disabled bg-light">
+                                <span class="page-link text-dark">Page {{ currentPage }} of {{ Math.ceil(filteredProducts.length / pageSize) }}</span>
+                            </li>
+                            <li class="page-item" ng-class="{ 'disabled': currentPage >= Math.ceil(filteredProducts.length / pageSize) }">
+                                <button class="page-link" ng-click="changePage(1)" ng-disabled="currentPage >= Math.ceil(filteredProducts.length / pageSize)">Next &raquo;</button>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
             </div>
         </div>
+
+        <!-- Product Details Modal -->
+        <div class="modal fade" id="productModal" tabindex="-1" aria-labelledby="productModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-xl">
+                <div class="modal-content">
+                    <div class="modal-header bg-primary text-white">
+                        <h5 class="modal-title" id="productModalLabel">{{ modalState.selectedProduct.name }}</h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    
+                    <div class="modal-body">
+                        
+                        <!-- Modal Loading State -->
+                        <div class="text-center my-5" ng-if="modalState.loading">
+                            <div class="spinner-border text-primary" role="status"></div>
+                            <p class="mt-2">Loading specifications...</p>
+                        </div>
+
+                        <!-- Modal Content -->
+                        <div class="row" ng-if="!modalState.loading && modalState.selectedProduct">
+                            
+                            <!-- Left Column: Image & Basic Info -->
+                            <div class="col-md-5">
+                                <img ng-src="{{ modalState.selectedProduct.image_url || 'https://placehold.co/600x400/eeeeee/31343c?text=No%20Image' }}" class="img-fluid rounded border mb-3" alt="{{ modalState.selectedProduct.name }}">
+                                <p class="badge bg-secondary mb-3">{{ modalState.selectedProduct.brand_division }}</p>
+                                
+                                <h6 class="fw-bold mb-2 border-bottom pb-2">Categories:</h6>
+                                <ul class="list-unstyled mb-3 ms-2">
+                                    <li ng-repeat="cat in modalState.selectedProduct.hierarchicalCategories">
+                                        <span ng-if="cat.main_category" class="text-muted">{{ cat.main_category }} &raquo; </span>
+                                        <span class="fw-bold text-dark">{{ cat.sub_category }}</span>
+                                    </li>
+                                </ul>
+                                
+                                <h6 class="fw-bold mb-2 border-bottom pb-2">Description:</h6>
+                                <p class="mt-2">{{ modalState.selectedProduct.short_description }}</p>
+                            </div>
+
+                            <!-- Right Column: Tech Specs, Docs, Variants -->
+                            <div class="col-md-7">
+                                
+                                <h6 class="border-bottom pb-2">Technical Specifications</h6>
+                                <table class="table table-sm table-striped mb-4">
+                                    <tbody>
+                                        <tr ng-repeat="attr in modalState.selectedProduct.attributes">
+                                            <th style="width: 40%;">{{ attr.attribute_name }}</th>
+                                            <td>{{ attr.attribute_value }}</td>
+                                        </tr>
+                                        <tr ng-if="!modalState.selectedProduct.attributes || modalState.selectedProduct.attributes.length === 0">
+                                            <td colspan="2" class="text-muted text-center py-3">No specifications listed.</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+
+                                <h6 class="mt-4 border-bottom pb-2">Documents</h6>
+                                <ul class="list-unstyled mb-4">
+                                    <li ng-repeat="doc in modalState.selectedProduct.documents" class="mb-2">
+                                        <a href="{{ doc.file_url }}" target="_blank" class="text-decoration-none">
+                                            <i class="bi bi-file-earmark-pdf text-danger"></i> {{ doc.document_type }}
+                                        </a>
+                                    </li>
+                                    <li ng-if="!modalState.selectedProduct.documents || modalState.selectedProduct.documents.length === 0" class="text-muted small">No documents available.</li>
+                                </ul>
+
+                                <h6 class="border-bottom pb-2">Available Variants</h6>
+                                <div class="table-responsive">
+                                    <table class="table table-sm table-hover table-bordered text-center align-middle">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th class="text-start">SKU</th>
+                                                <th>L (mm)</th>
+                                                <th>W (mm)</th>
+                                                <th>Thick (mm)</th>
+                                                <th>Weight (kg)</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr ng-repeat="variant in modalState.selectedProduct.variants">
+                                                <td class="text-start fw-bold text-primary">{{ variant.sku }}</td>
+                                                <td>{{ variant.length_mm || '-' }}</td>
+                                                <td>{{ variant.width_mm || '-' }}</td>
+                                                <td>{{ variant.thickness_mm || '-' }}</td>
+                                                <td>{{ variant.weight_kg || '-' }}</td>
+                                            </tr>
+                                            <tr ng-if="!modalState.selectedProduct.variants || modalState.selectedProduct.variants.length === 0">
+                                                <td colspan="5" class="text-muted py-3">No variants available.</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
     </div>
-</div>

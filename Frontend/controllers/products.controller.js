@@ -1,59 +1,106 @@
-app.controller('products.controller', function ($scope, $http, $location, $routeParams, $rootScope, $window, $cookies, AppService) {
+app.controller('products.controller', function ($scope, $http) {
     
-    // Initial state attached to $scope
+    // Core State
     $scope.products = [];
     $scope.loading = true;
     $scope.error = null;
+    
+    // Filter & Sort Models
+    $scope.searchFilter = {}; 
+    $scope.uniqueCategories = [];
+    $scope.uniqueBrands = [];
+    $scope.sortOption = 'name'; 
+    $scope.selectedCategories = {}; 
 
-    // Function to fetch data
+    // Pagination Models
+    $scope.currentPage = 1;
+    $scope.pageSize = 6; 
+    $scope.Math = window.Math; 
+
+    // Safely handle page changes
+    $scope.changePage = function(step) {
+        $scope.currentPage += step;
+    };
+
+    // Modal State (Grouped into an object to prevent scope issues)
+    $scope.modalState = {
+        selectedProduct: null,
+        loading: false
+    };
+
+    // Load Catalog
     $scope.loadProducts = function() {
         $scope.loading = true;
-        $scope.error = null;
-
-        // Note: You can later move this $http call into your AppService!
-        $http.get(AppService.API_BASE_URL + 'products')
+        $http.get('http://localhost:3000/api/products')
             .then(function(response) {
-                // Success
                 $scope.products = response.data;
                 $scope.loading = false;
+                
+                var allCategories = new Set();
+                var allBrands = new Set();
+
+                response.data.forEach(function(p) {
+                    if (p.brand_division) allBrands.add(p.brand_division);
+                    if (p.categories) {
+                        var cats = p.categories.split(', ');
+                        cats.forEach(c => allCategories.add(c));
+                    }
+                });
+
+                $scope.uniqueBrands = Array.from(allBrands).sort();
+                $scope.uniqueCategories = Array.from(allCategories).sort();
             })
             .catch(function(error) {
-                // Error
-                console.error("API Error:", error);
-                $scope.error = "Failed to load products. Is the backend running?";
+                $scope.error = "Failed to load products. Is your Node.js backend running?";
                 $scope.loading = false;
+                console.error("API Error:", error);
             });
     };
 
-    // Trigger the fetch when the controller loads
-    $scope.loadProducts();
+    // Custom Filter for Multiple Checkbox Categories
+    $scope.categoryFilter = function(product) {
+        var activeCategories = Object.keys($scope.selectedCategories).filter(k => $scope.selectedCategories[k]);
+        
+        if (activeCategories.length === 0) return true;
+        if (!product.categories) return false;
+        
+        return activeCategories.some(activeCat => product.categories.includes(activeCat));
+    };
 
-    $scope.selectedProduct = null;
-    $scope.detailsLoading = false;
+    // Helper to count how many categories are currently checked
+    $scope.getSelectedCategoryCount = function() {
+        return Object.keys($scope.selectedCategories).filter(k => $scope.selectedCategories[k]).length;
+    };
 
-    // Function to handle the modal opening
+    // Clear All Filters
+    $scope.clearFilters = function() {
+        $scope.searchFilter = {};
+        $scope.sortOption = 'name';
+        $scope.selectedCategories = {};
+        $scope.currentPage = 1; 
+    };
+
+    // Open Product Details Modal
     $scope.openDetails = function(product) {
-        // Set the base product info immediately so the modal has a title/image
-        $scope.selectedProduct = angular.copy(product);
-        $scope.detailsLoading = true;
-
-        // Fetch the extra relational data (Variants, Attributes, Documents)
-        var detailsUrl = AppService.API_BASE_URL + 'products/get/' + product.id;
+        $scope.modalState.selectedProduct = product;
+        $scope.modalState.loading = true;
         
-        $http.get(detailsUrl)
+        // Safety check: uses product_id if it exists, otherwise falls back to id
+        var productId = product.product_id || product.id;
+        
+        $http.get('http://localhost:3000/api/products/get/' + productId)
             .then(function(response) {
-                // Append the fetched data to our selectedProduct object
-                $scope.selectedProduct.variants = response.data.variants;
-                $scope.selectedProduct.attributes = response.data.attributes;
-                $scope.selectedProduct.documents = response.data.documents;
-                // NEW: Attach the hierarchical categories
-                $scope.selectedProduct.hierarchicalCategories = response.data.hierarchicalCategories;
-        
-                $scope.detailsLoading = false;
+                $scope.modalState.selectedProduct = response.data;
+                $scope.modalState.loading = false;
+
+                console.log("Loaded product details:", response.data);
             })
             .catch(function(error) {
-                console.error("Failed to fetch product details:", error);
-                $scope.detailsLoading = false;
+                console.error("Failed to load details", error);
+                $scope.modalState.loading = false;
             });
     };
+
+    // Initialize the page by loading products
+    $scope.loadProducts();
 });

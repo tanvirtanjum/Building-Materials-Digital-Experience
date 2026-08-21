@@ -28,9 +28,9 @@ export const getAll = (req: Request, res: Response, next: NextFunction): void =>
 };
 
 export const getById = (req: Request, res: Response, next: NextFunction): void => {
-    const productId = req.params.id;
+    const id = req.params.id;
 
-    service.getById(productId, (error: Error | null, results: any) => {
+    service.getById(id, (error: Error | null, results: any) => {
         if (error) {
             res.status(400).send({ 
                 success: false, 
