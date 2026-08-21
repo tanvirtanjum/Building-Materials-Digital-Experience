@@ -22,6 +22,11 @@ app.controller('products.controller', function ($scope, $http) {
         $scope.currentPage += step;
     };
 
+    // FIX ADDED: Safely reset to page 1 from inside child scopes (ng-repeat)
+    $scope.resetPage = function() {
+        $scope.currentPage = 1;
+    };
+
     // Modal State (Grouped into an object to prevent scope issues)
     $scope.modalState = {
         selectedProduct: null,
@@ -70,6 +75,16 @@ app.controller('products.controller', function ($scope, $http) {
     // Helper to count how many categories are currently checked
     $scope.getSelectedCategoryCount = function() {
         return Object.keys($scope.selectedCategories).filter(k => $scope.selectedCategories[k]).length;
+    };
+
+    // Check if any filters are currently active
+    $scope.hasActiveFilters = function() {
+        return (
+            ($scope.searchFilter.$ && $scope.searchFilter.$.length > 0) || 
+            ($scope.searchFilter.brand_division && $scope.searchFilter.brand_division.length > 0) || 
+            $scope.sortOption !== 'name' || 
+            $scope.getSelectedCategoryCount() > 0
+        );
     };
 
     // Clear All Filters
