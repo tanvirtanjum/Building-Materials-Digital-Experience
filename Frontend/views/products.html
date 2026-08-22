@@ -111,16 +111,16 @@
                     <span class="badge bg-secondary mb-3">{{ product.brand_division }}</span>
                 </div>
                 
-                <div class="card-footer bg-white border-top-0 pb-3 d-flex gap-2">
+                <div class="card-footer bg-white border-top-0 pb-3 d-flex gap-2 justify-content-end align-items-center">
                     <!-- View Details Button -->
                     <button type="button" class="btn btn-outline-primary w-50" data-bs-toggle="modal" data-bs-target="#productModal" ng-click="openDetails(product)">
                         <i class="fa-regular fa-eye"></i> Details
                     </button>
                     
                     <!-- NEW: Compare Button -->
-                    <button type="button" class="btn btn-outline-secondary w-50" ng-click="goToCompare(product)">
-                        <i class="bi bi-arrow-left-right"></i> Compare
-                    </button>
+                    <!-- <button type="button" class="btn btn-outline-secondary w-50" ng-click="goToCompare(product)">
+                        <i class="fa-solid fa-code-compare"></i> Compare
+                    </button> -->
                 </div>
             </div>
         </div>
