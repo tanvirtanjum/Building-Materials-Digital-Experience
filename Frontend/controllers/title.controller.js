@@ -20,6 +20,11 @@ app.controller('title.controller', function ($scope, $http, $location, $routePar
                 $scope.setTitle(newTitle);
             }
 
+            else if($location.$$path == '/contact'){
+                newTitle= `Contact | ${AppService.TITLE}`;
+                $scope.setTitle(newTitle);
+            }
+
             else{
                 newTitle = `404 Not Found | ${AppService.TITLE}`;
                 $scope.setTitle(newTitle);

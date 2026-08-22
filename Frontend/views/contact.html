@@ -1,0 +1,107 @@
+<div class="container py-5" style="min-height: 75vh;">
+    
+    <div class="row mb-5 text-center">
+        <div class="col-12">
+            <h2 class="fw-bold">Get in Touch</h2>
+            <p class="text-muted">Have a question about our products or need a custom quote? We're here to help.</p>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <!-- Contact Form -->
+        <div class="col-lg-7">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body p-4">
+                    <h4 class="mb-4"><i class="bi bi-chat-dots text-primary"></i> Send us a Message</h4>
+                    
+                    <!-- Success Alert -->
+                    <div class="alert alert-success" ng-if="status.success">
+                        <i class="bi bi-check-circle-fill"></i> Thank you! Your message has been sent successfully. We will get back to you shortly.
+                    </div>
+
+                    <!-- Contact Form -->
+                    <form name="contactForm" ng-submit="submitForm(contactForm.$valid)" novalidate ng-if="!status.success">
+                        
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">Your Name</label>
+                                <input type="text" class="form-control" name="name" ng-model="contactData.name" required>
+                                <span class="text-danger small" ng-show="contactForm.name.$invalid && contactForm.name.$touched">Name is required.</span>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">Email Address</label>
+                                <input type="email" class="form-control" name="email" ng-model="contactData.email" required>
+                                <span class="text-danger small" ng-show="contactForm.email.$invalid && contactForm.email.$touched">A valid email is required.</span>
+                            </div>
+                            
+                            <div class="col-12">
+                                <label class="form-label fw-bold">Subject</label>
+                                <input type="text" class="form-control" name="subject" ng-model="contactData.subject" required>
+                            </div>
+                            
+                            <div class="col-12">
+                                <label class="form-label fw-bold">Message</label>
+                                <textarea class="form-control" name="message" rows="5" ng-model="contactData.message" required></textarea>
+                            </div>
+                            
+                            <div class="col-12 mt-4">
+                                <button type="submit" class="btn btn-primary w-100 py-2" ng-disabled="contactForm.$invalid || status.submitting">
+                                    <span ng-if="!status.submitting"><i class="bi bi-send"></i> Send Message</span>
+                                    <span ng-if="status.submitting">
+                                        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Sending...
+                                    </span>
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- Contact Information -->
+        <div class="col-lg-5">
+            <div class="card shadow-sm border-0 h-100 bg-primary text-white">
+                <div class="card-body p-4">
+                    <h4 class="mb-4">Contact Information</h4>
+                    
+                    <div class="d-flex mb-4 align-items-start">
+                        <i class="bi bi-geo-alt fs-3 me-3"></i>
+                        <div>
+                            <h6 class="fw-bold mb-1">Headquarters</h6>
+                            <p class="mb-0 opacity-75">123 Building Materials Blvd.<br>Industrial District, Suite 100<br>Metropolis, NY 10001</p>
+                        </div>
+                    </div>
+
+                    <div class="d-flex mb-4 align-items-start">
+                        <i class="bi bi-telephone fs-3 me-3"></i>
+                        <div>
+                            <h6 class="fw-bold mb-1">Phone</h6>
+                            <p class="mb-0 opacity-75">Toll-Free: +1 (800) 555-0199<br>Local: +1 (555) 123-4567</p>
+                        </div>
+                    </div>
+
+                    <div class="d-flex mb-4 align-items-start">
+                        <i class="bi bi-envelope-open fs-3 me-3"></i>
+                        <div>
+                            <h6 class="fw-bold mb-1">Email</h6>
+                            <p class="mb-0 opacity-75">sales@knauf-catalog.com<br>support@knauf-catalog.com</p>
+                        </div>
+                    </div>
+                    
+                    <hr class="my-4 border-light opacity-50">
+                    
+                    <h6 class="fw-bold mb-3">Business Hours</h6>
+                    <table class="table table-borderless text-white table-sm opacity-75 mb-0">
+                        <tbody>
+                            <tr><td>Monday - Friday:</td><td class="text-end">8:00 AM - 6:00 PM</td></tr>
+                            <tr><td>Saturday:</td><td class="text-end">9:00 AM - 2:00 PM</td></tr>
+                            <tr><td>Sunday:</td><td class="text-end">Closed</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

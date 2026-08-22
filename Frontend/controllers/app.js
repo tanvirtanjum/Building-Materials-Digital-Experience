@@ -21,9 +21,9 @@ app.config(function ($routeProvider) {
         controller: 'products.controller'
     });
 
-    $routeProvider.when('/compare', {
-        templateUrl: '/views/compare.html',
-        controller: 'compare.controller'
+    $routeProvider.when('/contact', {
+        templateUrl: '/views/contact.html',
+        controller: 'contact.controller'
     });
 
     $routeProvider.otherwise({ 
