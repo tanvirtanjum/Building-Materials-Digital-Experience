@@ -22,38 +22,54 @@ app.controller('products.controller', function ($scope, $http) {
         $scope.currentPage += step;
     };
 
-    // FIX ADDED: Safely reset to page 1 from inside child scopes (ng-repeat)
+    // Safely reset to page 1 from inside child scopes (ng-repeat)
     $scope.resetPage = function() {
         $scope.currentPage = 1;
     };
 
-    // Modal State (Grouped into an object to prevent scope issues)
+    // Modal State
     $scope.modalState = {
         selectedProduct: null,
         loading: false
     };
 
-    // Load Catalog
+    // --- 1. NEW: Fetch Filters from Backend APIs ---
+    $scope.loadFilters = function() {
+        // Fetch Brands (Adjust the URL if your router uses a different path, e.g., '/api/brands')
+        $http.get('http://localhost:3000/api/products/get/brands')
+            .then(function(response) {
+                // Backend already sends an array of strings: ['Brand A', 'Brand B']
+                $scope.uniqueBrands = response.data;
+            })
+            .catch(function(error) {
+                console.error("Failed to load brands:", error);
+            });
+
+        // Fetch Categories (Adjust the URL if your router uses a different path)
+        $http.get('http://localhost:3000/api/categories')
+            .then(function(response) {
+                // Backend sends objects: [{id: 1, name: 'Drywall', ...}, ...]
+                // We map them to get an array of just the names for the checkboxes
+                var catNames = response.data.map(function(c) { return c.name; });
+                
+                // Use a Set just to ensure no duplicates if your DB had any weird data
+                $scope.uniqueCategories = Array.from(new Set(catNames)).sort();
+            })
+            .catch(function(error) {
+                console.error("Failed to load categories:", error);
+            });
+    };
+
+    // --- 2. UPDATED: Load Catalog ---
     $scope.loadProducts = function() {
         $scope.loading = true;
+        
         $http.get('http://localhost:3000/api/products')
             .then(function(response) {
                 $scope.products = response.data;
                 $scope.loading = false;
                 
-                var allCategories = new Set();
-                var allBrands = new Set();
-
-                response.data.forEach(function(p) {
-                    if (p.brand_division) allBrands.add(p.brand_division);
-                    if (p.categories) {
-                        var cats = p.categories.split(', ');
-                        cats.forEach(c => allCategories.add(c));
-                    }
-                });
-
-                $scope.uniqueBrands = Array.from(allBrands).sort();
-                $scope.uniqueCategories = Array.from(allCategories).sort();
+                // NO MORE Set() EXTRACTIONS HERE! The frontend is now clean and fast.
             })
             .catch(function(error) {
                 $scope.error = "Failed to load products. Is your Node.js backend running?";
@@ -100,15 +116,12 @@ app.controller('products.controller', function ($scope, $http) {
         $scope.modalState.selectedProduct = product;
         $scope.modalState.loading = true;
         
-        // Safety check: uses product_id if it exists, otherwise falls back to id
         var productId = product.product_id || product.id;
         
         $http.get('http://localhost:3000/api/products/get/' + productId)
             .then(function(response) {
                 $scope.modalState.selectedProduct = response.data;
                 $scope.modalState.loading = false;
-
-                console.log("Loaded product details:", response.data);
             })
             .catch(function(error) {
                 console.error("Failed to load details", error);
@@ -116,6 +129,7 @@ app.controller('products.controller', function ($scope, $http) {
             });
     };
 
-    // Initialize the page by loading products
-    $scope.loadProducts();
+    // --- 3. Initialize the page ---
+    $scope.loadFilters(); // Fetch the dropdown data
+    $scope.loadProducts(); // Fetch the product grid data
 });

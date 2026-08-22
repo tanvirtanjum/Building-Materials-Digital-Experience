@@ -3,6 +3,7 @@
 <head ng-controller="title.controller">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="./public/x_digital.png" type="image/x-icon">
     <title>{{GenerateTitle()}}</title>
 
     <!-- Bootstrap CSS -->
@@ -13,6 +14,7 @@
 
     <!-- Font Awesome -->
     <link rel="stylesheet" href="./assets/fontawesome-free-7.2.0-web/css/all.css" crossorigin="anonymous">
+    <script src="./assets/fontawesome-free-7.2.0-web/js/all.js" crossorigin="anonymous"></script>
 
     <!-- AngularJS -->
     <script src="./assets/angularjs/angular.js" crossorigin="anonymous"></script>
@@ -37,6 +39,9 @@
     <!-- Products Controller -->
     <script src="./controllers/products.controller.js" crossorigin="anonymous"></script>
 
+    <!-- Compare Controller -->
+    <script src="./controllers/compare.controller.js" crossorigin="anonymous"></script>
+
 
 
 </head>
@@ -45,15 +50,16 @@
         <nav class="navbar navbar-expand-lg bg-body-tertiary bg-dark " data-bs-theme="dark">
         <div class="container-fluid">
             <span class="navbar-brand" href="#">
-                <i class="fa-solid fa-screwdriver-wrench"></i> &nbsp;X Digital
+                <i class="fa-solid fa-screwdriver-wrench fa-beat"></i> &nbsp;X Digital
             </span>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
                 <div class="navbar-nav">
-                    <a class="nav-link" ng-class="{ active: isActive('/home') }" href="#!/home">Home</a>
-                    <a class="nav-link" ng-class="{ active: isActive('/products') }" href="#!/products">Products</a>
+                    <a class="nav-link" ng-class="{ active: isActive('/home') }" href="#!/home"><i class="fa-regular fa-house"></i> &nbsp;Home</a>
+                    <a class="nav-link" ng-class="{ active: isActive('/products') }" href="#!/products"><i class="fa-solid fa-helmet-safety"></i> &nbsp;Products</a>
+                    <a class="nav-link" ng-class="{ active: isActive('/compare') }" href="#!/compare"><i class="fa-solid fa-code-compare"></i> &nbsp;Compare</a>
                     <!-- <a class="nav-link" href="#">Pricing</a>
                     <a class="nav-link disabled" aria-disabled="true">Disabled</a> -->
                 </div>

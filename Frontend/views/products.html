@@ -74,10 +74,10 @@
         <!-- Clear Filters -->
         <div class="col-md-2 text-end">
             <button class="btn w-100" 
-                    ng-class="hasActiveFilters() ? 'btn-outline-danger' : 'btn-outline-secondary'"
+                    ng-class="hasActiveFilters() ? 'btn-danger' : 'btn-outline-secondary'"
                     ng-click="clearFilters()" 
                     ng-disabled="!hasActiveFilters()">
-                <i class="bi bi-x-circle"></i> Clear
+                <i class="fa-solid fa-filter-circle-xmark fa-canvas-square"></i>&nbsp;Clear
             </button>
         </div>
     </div>
@@ -115,7 +115,7 @@
         <!-- No Results fallback -->
         <div class="col-12 text-center py-5" ng-if="filteredProducts.length === 0">
             <h5 class="text-muted">No products found matching your filters.</h5>
-            <button class="btn btn-primary mt-2" ng-click="clearFilters()">Clear Filters</button>
+            <button class="btn btn-danger mt-2" ng-click="clearFilters()"><i class="fa-solid fa-filter-circle-xmark fa-canvas-square"></i> &nbsp;Clear Filters</button>
         </div>
     </div>
 
@@ -234,7 +234,7 @@
             </div>
             
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-danger" data-bs-dismiss="modal"><i class="fa-solid fa-eye-slash fa-canvas-square"></i>&nbsp;Close Details</button>
             </div>
         </div>
     </div>

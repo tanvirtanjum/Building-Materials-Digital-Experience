@@ -21,6 +21,11 @@ app.config(function ($routeProvider) {
         controller: 'products.controller'
     });
 
+    $routeProvider.when('/compare', {
+        templateUrl: '/views/compare.html',
+        controller: 'compare.controller'
+    });
+
     $routeProvider.otherwise({ 
         redirectTo: '/' 
     });
