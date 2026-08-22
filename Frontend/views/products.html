@@ -9,76 +9,84 @@
     <i class="bi bi-exclamation-triangle"></i> {{ error }}
 </div>
 
-<!-- FIX ADDED: style="min-height: 75vh;" prevents dropdown from getting cut off -->
 <div class="container-fluid mt-4" ng-if="!loading && !error" style="min-height: 75vh;">
     
     <!-- Advanced Search and Filter Bar -->
-    <div class="row g-2 bg-white p-3 rounded shadow-sm border align-items-center mb-3">
-        
-        <!-- Text Search -->
-        <div class="col-md-3">
-            <div class="input-group">
-                <span class="input-group-text bg-white text-muted"><i class="bi bi-search"></i></span>
-                <!-- FIX ADDED: ng-change="resetPage()" -->
-                <input type="text" class="form-control border-start-0" placeholder="Search catalog..." ng-model="searchFilter.$" ng-change="resetPage()">
+    <div class="bg-white p-3 rounded shadow-sm border mb-3">
+        <div class="row g-2 align-items-center">
+            
+            <!-- Text Search (Always Visible) -->
+            <!-- col-10 on mobile to leave room for the toggle button, col-md-3 on desktop -->
+            <div class="col-10 col-md-3">
+                <div class="input-group">
+                    <span class="input-group-text bg-white text-muted"><i class="bi bi-search"></i></span>
+                    <input type="text" class="form-control border-start-0" placeholder="Search catalog..." ng-model="searchFilter.$" ng-change="resetPage()">
+                </div>
             </div>
-        </div>
-        
-        <!-- Multi-Select Category Dropdown -->
-        <div class="col-md-3">
-            <div class="dropdown d-grid">
-                <button class="btn btn-white border dropdown-toggle text-start bg-white" 
-                        ng-class="{'text-muted': getSelectedCategoryCount() === 0, 'text-primary fw-bold border-primary': getSelectedCategoryCount() > 0}" 
-                        type="button" data-bs-toggle="dropdown" data-bs-auto-close="outside">
-                    
-                    <!-- Show this when nothing is selected -->
-                    <span ng-if="getSelectedCategoryCount() === 0">Select Categories...</span>
-                    
-                    <!-- Show this when 1 or more are selected -->
-                    <span ng-if="getSelectedCategoryCount() > 0">
-                        Categories ({{ getSelectedCategoryCount() }})
-                    </span>
+            
+            <!-- Mobile Toggle Button (Visible ONLY on mobile screens) -->
+            <div class="col-2 d-md-none">
+                <button class="btn btn-outline-primary w-100" type="button" data-bs-toggle="collapse" data-bs-target="#advancedFilters" aria-expanded="false" aria-controls="advancedFilters">
+                    <i class="fa-solid fa-angle-down"></i>
                 </button>
-                <ul class="dropdown-menu w-100 p-2 shadow-sm" style="max-height: 250px; overflow-y: auto;">
-                    <li ng-repeat="cat in uniqueCategories">
-                        <div class="form-check my-1">
-                            <!-- FIX ADDED: ng-change="resetPage()" -->
-                            <input class="form-check-input" type="checkbox" id="cat-{{$index}}" ng-model="selectedCategories[cat]" ng-change="resetPage()">
-                            <label class="form-check-label w-100" for="cat-{{$index}}" style="cursor: pointer;">{{ cat }}</label>
-                        </div>
-                    </li>
-                </ul>
             </div>
-        </div>
-        
-        <!-- Brand Dropdown -->
-        <div class="col-md-2">
-            <!-- FIX ADDED: ng-change="resetPage()" -->
-            <select class="form-select" ng-model="searchFilter.brand_division" ng-change="resetPage()">
-                <option value="">All Brands</option>
-                <option ng-repeat="brand in uniqueBrands" value="{{ brand }}">{{ brand }}</option>
-            </select>
-        </div>
 
-        <!-- Sorting Dropdown -->
-        <div class="col-md-2">
-            <!-- FIX ADDED: ng-change="resetPage()" -->
-            <select class="form-select" ng-model="sortOption" ng-change="resetPage()">
-                <option value="name">Name (A-Z)</option>
-                <option value="-name">Name (Z-A)</option>
-                <option value="-created_at">Newest First</option>
-                <option value="created_at">Oldest First</option>
-            </select>
-        </div>
+            <!-- Collapsible Filters (Hidden on mobile by default, inline on desktop) -->
+            <div class="col-12 col-md-9 collapse d-md-block" id="advancedFilters">
+                <div class="row g-2 mt-2 mt-md-0 align-items-center">
+                    
+                    <!-- Multi-Select Category Dropdown -->
+                    <div class="col-12 col-md-4">
+                        <div class="dropdown d-grid">
+                            <button class="btn btn-white border dropdown-toggle text-start bg-white" 
+                                    ng-class="{'text-muted': getSelectedCategoryCount() === 0, 'text-primary fw-bold border-primary': getSelectedCategoryCount() > 0}" 
+                                    type="button" data-bs-toggle="dropdown" data-bs-auto-close="outside">
+                                
+                                <span ng-if="getSelectedCategoryCount() === 0">Select Categories...</span>
+                                <span ng-if="getSelectedCategoryCount() > 0">Categories ({{ getSelectedCategoryCount() }})</span>
+                            </button>
+                            <ul class="dropdown-menu w-100 p-2 shadow-sm" style="max-height: 250px; overflow-y: auto;">
+                                <li ng-repeat="cat in uniqueCategories">
+                                    <div class="form-check my-1">
+                                        <input class="form-check-input" type="checkbox" id="cat-{{$index}}" ng-model="selectedCategories[cat]" ng-change="resetPage()">
+                                        <label class="form-check-label w-100" for="cat-{{$index}}" style="cursor: pointer;">{{ cat }}</label>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <!-- Brand Dropdown -->
+                    <div class="col-12 col-md-3">
+                        <select class="form-select" ng-model="searchFilter.brand_division" ng-change="resetPage()">
+                            <option value="">All Brands</option>
+                            <option ng-repeat="brand in uniqueBrands" value="{{ brand }}">{{ brand }}</option>
+                        </select>
+                    </div>
 
-        <!-- Clear Filters -->
-        <div class="col-md-2 text-end">
-            <button class="btn w-100" 
-                    ng-class="hasActiveFilters() ? 'btn-danger' : 'btn-outline-secondary'"
-                    ng-click="clearFilters()" 
-                    ng-disabled="!hasActiveFilters()">
-                <i class="fa-solid fa-filter-circle-xmark fa-canvas-square"></i>&nbsp;Clear
-            </button>
+                    <!-- Sorting Dropdown -->
+                    <div class="col-12 col-md-3">
+                        <select class="form-select" ng-model="sortOption" ng-change="resetPage()">
+                            <option value="name">Name (A-Z)</option>
+                            <option value="-name">Name (Z-A)</option>
+                            <option value="-created_at">Newest First</option>
+                            <option value="created_at">Oldest First</option>
+                        </select>
+                    </div>
+
+                    <!-- Clear Filters -->
+                    <div class="col-12 col-md-2 text-end d-grid d-md-block">
+                        <button class="btn w-100" 
+                                ng-class="hasActiveFilters() ? 'btn-danger' : 'btn-outline-secondary'"
+                                ng-click="clearFilters()" 
+                                ng-disabled="!hasActiveFilters()">
+                            <i class="fa-solid fa-filter-circle-xmark fa-canvas-square"></i> <span class="d-md-none d-lg-inline">&nbsp;Clear</span>
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+
         </div>
     </div>
     
@@ -103,10 +111,15 @@
                     <span class="badge bg-secondary mb-3">{{ product.brand_division }}</span>
                 </div>
                 
-                <div class="card-footer bg-white border-top-0 pb-3">
+                <div class="card-footer bg-white border-top-0 pb-3 d-flex gap-2">
                     <!-- View Details Button -->
-                    <button type="button" class="btn btn-outline-primary w-100" data-bs-toggle="modal" data-bs-target="#productModal" ng-click="openDetails(product)">
-                        <i class="fa-regular fa-eye"></i> View Details
+                    <button type="button" class="btn btn-outline-primary w-50" data-bs-toggle="modal" data-bs-target="#productModal" ng-click="openDetails(product)">
+                        <i class="fa-regular fa-eye"></i> Details
+                    </button>
+                    
+                    <!-- NEW: Compare Button -->
+                    <button type="button" class="btn btn-outline-secondary w-50" ng-click="goToCompare(product)">
+                        <i class="bi bi-arrow-left-right"></i> Compare
                     </button>
                 </div>
             </div>
